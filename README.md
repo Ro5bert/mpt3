@@ -42,7 +42,7 @@ myfont.65 myfont.66`.
 We can test out the font using TeX+Dvips.
 (PdfTeX does not support Type 3 fonts.)
 
-Let `doc.tex` be the following file (make sure TeX can find `myfont.tfm`):
+Let `doc.tex` be the following file:
 
 ```tex
 \font\myfont=myfont
@@ -60,6 +60,7 @@ myfont MyFont <myfont.ps
 ```
 
 Then run `tex doc.tex && dvips -u '+myfont.map' doc.dvi` to produce `doc.ps`.
+(Make sure TeX can find myfont.tfm and Dvips can find myfont.map.)
 With luck, this should produce something that looks like the following:
 
 ![alternating green triangles and black squares](doc.png)
