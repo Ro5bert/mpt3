@@ -1,5 +1,7 @@
 # mpt3
 
+mpt3 converts MetaPost PostScript output to a Type 3 font.
+
 Use `beginglyph` and `endglyph` from [mpt3.mp](mpt3.mp) in place of
 `beginchar` and `endchar`, and then invoke the following:
 
