@@ -52,9 +52,10 @@ Let `doc.tex` be the following file:
 \bye
 ```
 
-Dvips needs to be told what font (i.e., set of glyphs) to associate with
-"myfont".
-We do this with a map file.
+Dvips needs to be told what PostScript font (i.e., font glyphs) to associate
+with the TFM file called "myfont".
+We do this with a
+[map file](https://tug.org/texinfohtml/dvips.html#Making-a-font-available).
 Let `myfont.map` be the following file:
 
 ```
