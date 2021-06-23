@@ -1,0 +1,77 @@
+#!/usr/bin/awk -f
+
+BEGIN { setbbox = 0 }
+
+/^%%HiResBoundingBox/ {
+	llx = $2
+	lly = $3
+	urx = $4
+	ury = $5
+	if (!setbbox || llx < mllx) mllx = llx
+	if (!setbbox || lly < mlly) mlly = lly
+	if (!setbbox || urx > murx) murx = urx
+	if (!setbbox || ury > mury) mury = ury
+	setbbox = 1
+}
+
+/^%BeginGlyph/,/^%EndGlyph/ {
+	if ($1 == "%BeginGlyph") {
+		if (llx == "") {
+			print "missing hi res bbox"
+			exit 1
+		}
+		currg = $2
+		gcode[currg] = $3
+		if ($5 == 0) # No color
+			gproc[currg] = sprintf("\t\t\t%f 0 %f %f %f %f setcachedevice",
+				$4, llx, lly, urx, ury)
+		else # Color
+			gproc[currg] = sprintf("\t\t\t%f 0 setcharwidth", $4)
+		llx = lly = urx = ury = ""
+	} else if ($1 != "%EndGlyph") {
+		gproc[currg] = gproc[currg] "\n\t\t\t" $0
+	}
+}
+
+END {
+	"date -u" | getline date
+	scale = 1/designsize
+	printf "%%!PS-Adobe-3.0 Resource-Font\n"
+	printf "%%%%Title: %s\n", name
+	printf "%%%%Creator: mpt3\n"
+	printf "%%%%CreationDate: %s\n", date
+	printf "%%%%EndComments\n"
+	printf "7 dict begin\n"
+	printf "	/FontType 3 def\n"
+	printf "	/FontMatrix [%f 0 0 %f 0 0] def\n", scale, scale
+	printf "	/FontBBox [%f %f %f %f] def\n", mllx, mlly, murx, mury
+	printf "	/Encoding 256 array def\n"
+	printf "		0 1 255 {Encoding exch /.notdef put} for\n"
+	for (g in gcode)
+		printf "\t\tEncoding %d /%s put\n", gcode[g], g
+	printf "	/GlyphProc %d dict def GlyphProc begin\n", length(gcode)+1
+	printf "		/.notdef {} def\n"
+	for (g in gcode) {
+		printf "\t\t/%s {\n", g
+		print gproc[g]
+		printf "\t\t} bind def\n"
+	}
+	printf "	end\n"
+	printf "	/BuildGlyph {\n"
+	printf "		0 0 dtransform truncate idtransform setlinewidth pop\n"
+	printf "		[] 0 setdash\n"
+	printf "		1 setlinecap\n"
+	printf "		1 setlinejoin\n"
+	printf "		10 setmiterlimit\n"
+	printf "		exch /GlyphProc get exch\n"
+	printf "		2 copy known not {pop /.notdef} if\n"
+	printf "		get exec\n"
+	printf "	} bind def\n"
+	printf "	/BuildChar {\n"
+	printf "		1 index /Encoding get exch get\n"
+	printf "		1 index /BuildGlyph get exec\n"
+	printf "	} bind def\n"
+	printf "currentdict end\n"
+	printf "/%s exch definefont pop\n", name
+	printf "%%%%EOF\n"
+}
