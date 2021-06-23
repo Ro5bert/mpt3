@@ -1,7 +1,7 @@
 # mpt3
 
-Use `beginglyph` and `endglyph' from [mpt3.mp](mpt3.mp) in place of
-`beginchar` and `endchar`, then invoke the following:
+Use `beginglyph` and `endglyph` from [mpt3.mp](mpt3.mp) in place of
+`beginchar` and `endchar`, and then invoke the following:
 
 	mpt3 name=<PS NAME> designsize=<POINT SIZE> <GLYPHS FILES ...>
 
