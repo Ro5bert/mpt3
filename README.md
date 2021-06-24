@@ -39,7 +39,7 @@ Run `mpost '&mfplain \mode=lowres; input myfont.mp'` to produce `myfont.65`,
 `myfont.66`, and `myfont.tfm`.
 
 Convert the glyph files to a Type 3 font with `mpt3 name=MyFont designsize=10
-myfont.65 myfont.66`.
+myfont.65 myfont.66 >myfont.ps`.
 
 We can test out the font using TeX+Dvips.
 (PdfTeX does not support Type 3 fonts.)
